@@ -1,0 +1,306 @@
+%\documentclass[nobib]{MSword}
+\documentclass[12pt]{article}
+% Class options:
+%-------------------------------
+% nobib         - skip bibliography code/ don't include bib
+% math          - include math packages and useful math commands
+% hidelinks     - hide hyperref colored link boxes
+% wordlinks     - link color scheme similar to word
+
+
+% Preamble code:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage[english]{babel}
+%\usepackage{csquotes}
+%\usepackage{lipsum}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage{titling}
+\setlength{\droptitle}{-10em}
+\usepackage{amssymb} 
+\usepackage{geometry}
+\geometry{a4paper,left=3.3cm,right=3.3cm,top=2.7cm,bottom=2.7cm}
+\usepackage{setspace}
+\usepackage{algpseudocode}
+\usepackage{algorithm}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}{Corollary}[theorem]
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}{Proposition }
+% % Uncomment using "Ctrl + /" (/ on numpad):
+% % Customizing headers and footers:
+% \fancypagestyle{custom}{%
+%     \fancyhf{}% clears the footer and header
+%     % Header:
+%     \fancyhead[L]{}
+%     \fancyhead[C]{}
+%     \fancyhead[R]{}
+%     % Footer:
+%     \fancyfoot[L]{}
+%     \fancyfoot[C]{}
+%     \fancyfoot[R]{}
+%         % Tips:
+%         % ----
+%         % L: left, C: center, R: right
+%         % O: odd pages, E: even pages
+%         % ----
+%         % Example: \fancyghead[LO,RE]{Text}
+%         % will produce "Text" left in the header
+%         % on odd pages and right in the header on even pages.
+%     % Rules/ lines:
+%     \renewcommand{\headrulewidth}{0.4pt}
+%     \renewcommand{\footrulewidth}{2pt}
+% }
+% % Changing the pagestyle:
+% \pagestyle{custom}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Preamble information:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\vspace{2.5cm}Midway Report for First-Order Method for Online Optimization }
+\author{Yufeng Yang; Kang An}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% The document:
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\maketitle 
+\section{Problem Formulation}
+\label{PF}
+In this work, we want to design efficient projection free algorithm using frank-wolfe method under full and partial information settings for online learning problems. the loss function is a class of non-convex loss function,which are weak pseudo convex function. Our goal is the find a "tight" upper bound as much as possible for the regret.\\
+In online learning, our objective is to bound the regret:
+\begin{equation}
+    \text { Regret }_T=\sum_{t=1}^T f_t\left(\mathbf{x}_t\right)-\min _{\mathbf{x} \in \mathcal{K}} \sum_{t=1}^T f_t(\mathbf{x}^*) .
+\end{equation}
+where $\mathbf{x}^*$ is the optimum decision vector.\\
+However, unlike the traditional loss function $f_t(x_t)$, in this project, we want to change our loss function to $f_t(\mathbf{u_t}^T \mathbf{x_t})$, where $f_t$ is weak pseudo convex function, and $\bold{u}_t^T\bold{x_t}$ is a linear function. Besides, the decision set is $\mathcal{K}$ is restricted to be $\mathcal{K} =\left \{ \mathbf{x}  | \left \| \mathbf{x} \right \|_2 \leq 1  \right \}$. 
+the regret bound becomes:
+\begin{equation}
+    \text { Regret }_T=\sum_{t=1}^T f_t\left(\mathbf{c}_t^T\mathbf{x}_t\right)-\min _{\left \| \mathbf{x^*} \right \|_2 \leq 1} \sum_{t=1}^T f_t(\mathbf{c}^T\mathbf{x}).
+\end{equation}
+This setting has important applications in machine learning problem such as online classification problem.\\
+%\textbf{Online setting}:In traditional online setting, the learner select a decision $\bold{x_t}$, an oblivious adversary select the associated $\bold{u_t}$ simultaneously. However, after the time t, the learner can gain for information about the function $f_t(\left \langle \mathbf{u_t}, \right \rangle):$ as well as the information of $\bold{u_t}$. Thus, when applying first-order methods, we can directly compute the gradient explicitly.\\
+%\textbf{Bandit setting}:Under bandit setting, things get more complicated. Similarly as before, the learner select a decision $\bold{x_t}$, an oblivious adversary select the associated $\bold{u_t}$ correspondingly. But unlike online setting, the learner cannot gain for information about the function $f_t$ as well as the adversary input $\bold{u_t}$, leaner can only observe a value (loss) $c_t$. In that case, applying first-order method directly is meaningless because we have no access to gradient directly. Instead, in this work, we will also design appropriate sampling method to construct an unbiased estimator of gradient.
+\section{Recent Work}
+%\textbf{Online Gradient and Online Frank-Wolfe}:\\
+%For convex objective with appropriate step size, we can let the regret bounded by $O(\sqrt{T})$. However, the drawbacks of online gradient descent is obvious, the projection operator typically is computing inefficient. It will increase the computation cost when decision set is large enough. In order to eliminate this drawback, we will use projection free algorithm instead. The Frank-Wolfe algorithm, also known as conditional gradient, is a simple algorithm for minimizing a smooth convex function $f$ over a convex set $K \in R^n$. The iterates will always lie inside the convex set thus no projection is needed. Besides, at each iteration, it simply requires to minimize a linear objective over the set. And Frank Wolfe algorithm for smooth function will converge to optimum with the order of $O(\frac{1}{t})$.\\
+%Adding the quadratic regularization is the smoothing step. For convex function, using Frank Wolfe algorithm, the regret can be bounded by $O(T^{\frac{3}{4}}).$ In this project, we will borrow the frank wolfe framework for non-convex functions (specially, the weak-presudo convex function). Although it might get a worse bound, it will generalize the function class from convex to non-convex class.
+\textbf{Online and Bandit problem with Non-convexity}: There are bunch of works talk about the simlilar algorithm without convexity. In 2018, Xiang Gao et al. \cite{gao2018online} propose two algorithms, ONGD (Online Normalized Gradient Descent) and BONGD (Bandit Online Normalized Gradient Descent) under the Pseudo-Convexity and bounded gradient assumption, non-stationary regret bound $O(\sqrt{T})$.  In 2015, 
+Lijun Zhang, Tianbao Yang et al. \cite{zhang2015online} proposed a bandit version algorithm which has formal theoretical guarantees such as achieving a $O(poly(d)T^{2/3})$ regret bound when the variation in loss function is small and Both $c_t$ and $f_t$ are upper bounded by a constant B.\\
+However, computing gradient project can be time-costing. Finding a way to simulate normalized gradient or a convergence sequence are also tricky. To overcome these issues, Frank-Wolfe method is a good technique to explore under online and bandit setting. In 2012, \cite{DBLP:journals/corr/abs-1206-4657},Elad Hazan et al. propose the first Frank-Wolfe algorithm for online convex optimization. They gave $O(T^{\frac{3}{4}})$ for adversarial costs in this paper. Later, some improvements of Frank-Wolfe Methods have been proposed. In \cite{DBLP:journals/corr/HazanL16}, Haipeng Luo et al. apply standard SGD and variance-reduced SGD for Frank-Wolfe method and give a regret bound for strongly convex functions.In \cite{DBLP:journals/corr/abs-1206-4657}, Yuanyu Wang et al. apply line search strategy on Frank-Wolfe methods and give an upper bound for regret function under convex setting. 
+In \cite{lafond2015online} Jean Lafond et al. give a convergence result for convex and non-convex loss function using Frank-Wolfe methods under the metric Frank-Wolfe duality gap. They prove their algorithms can converge to a stationary point. In \cite{balasubramanian2019zerothorder}, Krishnakumar Balasubramanian et al. considers a two points zero-order gradient approximation for Frank-Wolfe algorithms under bandit setting. \\
+However, there is no previous studies on projection free methods for Weak Pseudo Convex function. There is also no one-point gradient approximation for them. In this report, we will modify and improve their results to bridge the gap for utilizing Frank-Wolfe method on Weak Pseudo Convex functions.
+\section{Problem Assumptions}
+In this paper, we assume the loss function $f_t:R^n \rightarrow R$ has special structure, namely:$f(\bold{x};\bold{c})=f(\bold{c}^T\bold{x})$, where $f_t$ satisfy the Weak Pseudo convexity definition.
+\begin{definition}[Weak Pseudo Convexity]
+A function $f(\cdot)$ is said to be weakly pseudo-convex (WPC) if there exists $K>0$ such that
+$$
+f(x)-f\left(x^*\right) \leq K \frac{\nabla f(x)^{\top}\left(x-x^*\right)}{\|\nabla f(x)\|}
+$$
+holds for all $x \in \mathcal{X}$, with the convention that $\frac{\nabla f(x)}{\|\nabla f(x)\|}=0$ if $\nabla f(x)=0$, where $x^*$ is one optimal solution, i.e., $x^* \in$ $\arg \min _{x \in \mathcal{X}} f(x)$
+\end{definition}
+If a differentiable (WPC) function $f$ is Lipschitz continuous with Lipschitz constant M, 
+For our problem, utilizing the special function structure, then the function K can be set to M.
+For our problem, combine above facts, we have:
+\begin{assumption}[$f_t$ is Lipschitz Continuous]
+the loss function $f_t$ satisfy:
+\begin{equation}
+    \left |  f(\bold{c};\bold{x})-f(\bold{c};\bold{y})  \right | \leq M \left \| \bold{x}-\bold{y} \right \|
+\end{equation}
+\end{assumption}
+The WPC assumption applies on our function becomes:
+\begin{equation}
+f(\bold{c};\bold{x})-f\left(\bold{c};x^*\right) \leq  M \frac{\bold{c}^T(\bold{x}-\bold{x^*})}{\left \| \bold{c} \right \|}
+\end{equation}
+
+\begin{definition}[Convex set]
+     $A$ set $K$ is convex if the line segment between any two points in $K$ lies in $K$, i.e. $\forall x_1, x_2 \in$ $C, \forall \theta \in[0,1]$
+$$
+\theta x_1+(1-\theta) x_2 \in K
+$$
+\end{definition}
+Besides assumptions on functions, we also require assumptions on decision set: 
+\begin{assumption}
+    decision set K must be a convex set
+\end{assumption}
+\begin{assumption}
+     decision set K must be bounded(i.e. bounded by a diameter R). 
+\end{assumption}
+For our problem, since we define the decision set K =$\left \{ x | \left \| x \right \|_2\leq 1 \right \}$. It is easily verified that this set satisfy above assumptions.\\
+Besides, we need to make sure there is a minimum solution $x^*$ for function $f$.
+\begin{assumption}[existence of solution]
+    There exists a solution $x^* \in K$ for $\min_{x\in K} \sum_{t=1}^{T}f_t$
+\end{assumption}
+
+\section{Main Algorithms}
+\subsection{Online Frank-Wolfe for non-convex optimization}
+In online setting, after several trails for different settings of online Frank-Wolfe, we finalize our algorithms same as \cite{hazan2016introduction}.The difference is 
+in \cite{hazan2016introduction}, Elad Hazan gave convergence proof for classical convex loss function. But here, we want to use it for WPC loss function, which are a special class of non-convex functions.\\
+In the algorithm, for simplicity, we use $\triangledown_{\tau}$ to represent the gradient $\triangledown f_t$ of loss function $f_t$
+\begin{algorithm}[H]
+\caption{Online Frank Wolfe}\label{ofw}
+\begin{algorithmic}
+\Require convex set $K,T,x_1$,step size $\left \{ \eta_t \in (0,1] \right \}$
+
+\For{\texttt{t = 1 to T}}
+
+\State Play $\bold{x}_t$ and observe $f_t(\bold{x}_t)$
+\State Let $F_t(\bold{x}) = \eta \sum_{\tau=1}^{t-1} \triangledown_{\tau}^Tx + \left \| x-x_1 \right \|^2$
+\State Compute $\bold{v_t} = arg \min_{x\in K} \left \{ \triangledown F_t(\bold{x}_t)^T \bold{x} \right \}$
+\State set $\bold{x}_{t+1} = (1-\sigma_t)\bold{x}_t+\sigma_t \bold{v}_t$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+Unlike the traditional frank-wolfe, which directly solve the constrained linear oracle:$\bold{v}_t = arg \min_{x\in K} \left \{ \triangledown f_t(\bold{x_t})^T \bold{x} \right \}$. Here we use the gradient of a quadratic function to replace the gradient of $\triangledown f_t(\bold{x_t})$. The reason for using regularization is, the frank-wolfe algorithm is insensitive to the magnitude due to the linear objective and adding a regularization can avoid this. Besides, recording the history gradient $\triangledown_{\tau}$ will decrease the vibration during decicion update.\\
+We already make some progress in proving the regret bound. In this section, we will highlight required lemma and theorems.\\
+\begin{lemma}
+Let $\left\{h_t\right\}$ be a sequence that satisfies the recurence
+$$
+h_{t+1} \leq h_t\left(1-\eta_t\right)+\eta_t^2 c .
+$$
+Then taking $\eta_t=\min \left\{1, \frac{2}{t}\right\}$ implies
+$$
+h_t \leq \frac{4 c}{t}
+$$
+\end{lemma}
+\begin{theorem}
+     The $CG$ algorithm applied to $\beta$-smooth functions with step sizes $\eta_t=\min \left\{1, \frac{2}{t}\right\}$ attains the following convergence guarantee
+$$
+h_t \leq \frac{2 \beta D^2}{t}
+$$
+\end{theorem}
+Due to page limitation, we will finalize above proofs in appendix in final report. If we check the definition the function $F$, we can find this function is 1-smooth strongly convex. Although we haven't formalize the regret bound. The following deduction is the tentative regret bound:
+\begin{align}
+Regret_T=\sum_{t=1}^{T}(f_t(x) - \min_{\left \| x \right \| \leq 1 }f_t(x^*)) \\
+\leq \sum_{t=1}^{T} ( f_t(x) - f_t(x^*)) \\
+\leq \sum_{t=1}^{T} M \frac{\triangledown f(\bold{c}_t^T\bold{x}_t)(\bold{x}_t - \bold{x^*}) }{\left \| \triangledown f(\bold{c}_t^T\bold{x}_t) \right \|} \\
+= \sum_{t=1}^{T} M \frac{\bold{c}_t^T(\bold{x}_t-\bold{x}^*)}{\left \| \bold{c}_t \right \|} \\
+\leq \sum_{t=1}^{T} M\left \| \bold{x}_t-\bold{x}^* \right \|
+\end{align}
+Where the second inequality comes from the definition of WPC definition. The third inequality is simply Cauchy-Schwarz.\\
+After obtaining expression 9. We can use the above lemmas to obtain the (tentative) convergence bound.\\
+Now, define $\bold{x}_t^*= \arg\min _{x \in K} F_t(x) = \arg\min\eta \sum_{\tau=1}^{t-1} \triangledown_{\tau}^Tx + \left \| x-x_1 \right \|^2$
+\begin{align}
+\left \| \bold{x}_t -\bold{x^*} \right \| & \leq  \left \| \bold{x}_t -\bold{x}_t^* \right \| + \left \| \bold{x}_t^*-\bold{x}^* \right \| \\
+&\leq \sqrt{F(\bold{x}_t)-F(\bold{x}_t^*)}+ \sqrt{F(\bold{x}_t^*)-F(\bold{x}^*)} \\
+&\leq \sqrt{(\frac{2D^2}{\sqrt{t}})^{\frac{1}{2}} } + \sqrt{ F(\bold{x}_t^*)-F(\bold{x}^*)} 
+\end{align}
+Where the expression (11) is beacuse of the strong convexity for $F(x)$: $ \left \| x_t - x_t^* \right \|^2 \leq F(x_t) - F(x_t^*)$\\
+And the third inequality is because of the lemma and theorem listed above. Plugging (13) into (9), we have:
+\begin{align}
+Regret_T= \\
+\leq M \sum_{t=1}^{T} (\frac{2D^2}{\sqrt{t}})^{\frac{1}{2}}+ M \sum_{t=1}^{T} \sqrt{F_t(\bold{x}_t^*)-F_t(\bold{x}^*)} \\
+\leq M \int_{1}^{T}(\frac{2D^2}{\sqrt{t}})^{\frac{1}{2}} dt +  M \sum_{t=1}^{T} \sqrt{F_t(\bold{x}_t^*)-F_t(\bold{x}^*)} \\
+= M \frac{8\sqrt{2}}{3} T^{\frac{3}{4}} + M \sum_{t=1}^{T} \sqrt{F_t(\bold{x}_t^*)-F_t(\bold{x}^*)} 
+\end{align}
+The second inequality is because of discrete to continuous transformation. Because in our setting, the constraint set is euclidean norm ball, where the diameter D=2. The first term in expression (17) is a direct calculation of integral.\\
+We met some technical difficulties in finding bounds for second term of expression (17). Hopefully, we will update the explicit form at final report.
+\subsection{Bandit Frank-Wolfe for non-convex optimization}
+Under bandit seeting, the function and gradient is no-longer available to decision maker. Thus, we need to use "zeroth-order optimization" technique to give an estimator based on available observation.\\
+There are a lot of techniques to sample the observation, to preserve the gambling rule, here we still use one-point observation to compute the estimate.\\
+The following lemma provides a way to compute the estimate of gradient.\\
+\begin{lemma}
+    Fix $\delta>0$. Let $\hat{f}_\delta(\mathbf{x})$ be as defined in (6.4), and let $\mathbf{u}$ be a uniformly drawn unit vector $\mathbf{u} \sim \mathbb{S}$. Then
+$$
+\underset{\mathbf{u} \in \mathbb{S}}{\mathbf{E}}[f(\mathbf{x}+\delta \mathbf{u}) \mathbf{u}]=\frac{\delta}{n} \nabla \hat{f}_\delta(\mathbf{x})
+$$
+\end{lemma}
+Where $\mathbb{S}$ is the unit norm ball, n is the number of dimension. It indicates by observing feedback generated by a perturbed input $\bold{x}+\delta \bold{u}$, we can estimate the gradient.\\
+\begin{algorithm}[H]
+\caption{Bandit Frank Wolfe}\label{ofw}
+\begin{algorithmic}
+\Require horizon T, constraint set K, initialization point $\bold{x}_1$
+\For{\texttt{t = 1 to T}}
+\State sample random vector $\bold{u}_t$ according to uniform distribution in the unit ball. i.e. $\bold{u}_t \sim \mathbb{S}$
+\State Play $\bold{x}_t+\delta \bold{u}_t$ and observe the loss $f_t(\bold{x}_t+\delta \bold{u}_t)$
+\State define $\widetilde{\triangledown_t} = \frac{n}{\delta}f_t(\bold{y}_t)\bold{u}_t$
+\State Let $F_t(\bold{x}) = \eta 
+\sum_{\tau=1}^{t-1} \widetilde{\triangledown_{\tau}}^Tx + \left \| x-x_1 \right \|^2$
+\State Compute $\bold{v_t} = arg \min_{x\in K} \left \{ 
+\widetilde{\triangledown} F_t(\bold{x}_t)^T \bold{x} \right \}$
+\State set $\bold{x}_{t+1} = (1-\sigma_t)\bold{x}_t+\sigma_t \bold{v}_t$
+\EndFor
+\end{algorithmic}
+\end{algorithm}
+Notice that $\widetilde{\triangledown_t} = \frac{n}{\delta}f_t(\bold{y}_t)\bold{u}_t$ is an unbiased estimator of gradient. The proof of regret bound should be very similar as above results. In the final report, we will finalize the regret bound proof of Bandit Frank-Wolfe algorithm.
+
+
+
+\section{Future Plan}
+The key question we consider now is regret bound proof. Above we mainly consider the regret bound for a class of non-convex functions. \\
+In reality, for optimizing general non-convex frank-wolfe algorithms, many literature atures use Frank-Wolfe(FW) duality gap to measure the algorithm.
+\begin{equation}
+    g_t^{FW} = \left \langle \triangledown F_t(\bold{x_t}), \bold{x}_t - \bold{v}_t \right \rangle
+\end{equation}
+When the algorithm converges to a stationary point, the duality gap defined above should be 0.
+If time allows, we may also consider to give an algorithm convergence proof with respect to FW duality gap.\\
+Another issue is about gradient approximation.
+Above We mainly consider the one point approximation method: after play $\mathbf{x_t}$ and receive the $f_t(\bold{x_t}) = f(\bold{c_t}^T\bold{x_t})$ we use $\frac{n}{\delta}f(\bold{x_t}+\delta \bold{u_t})$ as the estimator of $\triangledown f_t(\bold{c}^T\bold{x})$
+However, there are some drawbacks for sphere sampling algorithm, especially when the center of the sphere is very close to the boundary of the decision set.To overcome this issue, the author also introduced ellipsoidal sampling estimator by inducing a invertbile matrix $A \in R^{n \times n}$ and define $\hat{f}(x)=\mathbf{E} \left ( f(\mathbf{x}+ A\mathbf{v}) \right )$. Similarly as above, claim $ n \mathbf{E}\left [ f(\mathbf{x}+ \mathbf{A}\mathbf{q})\mathbf{A}^{-1}\mathbf{q} \right ] = \triangledown \hat{f}(\bold{x})$. By generating the unbiased estimation sequence $\bold{y_t}=\bold{x}_t + \bold{A}\bold{q}_t$, oberseve the loss $c_t$ and reconstruct the gradient estimator $\bold{g}_t = n c_t\bold{A}^{-1}\bold{q_t}$. In this project, we will adjust their sampling strategy to make the sampling strategy fit our problem.\\~\\
+To summarize, in the final report, we will:
+\begin{itemize}
+    \item Find an explicit expression for regret bound under online and bandit setting.
+    \item We will also try to give a convergence proof under FW duality gap.
+    \item Modify and update bandit Frank Wolfe algorithm if time allows (optional)
+    \item Conduct simple numerical experiments (optional)
+\end{itemize}
+
+
+\bibliographystyle{alpha}
+\bibliography{bib/bibliography}
+\end{document}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Copyright Remarks:
+%--------------------
+
+% Copyright holder: Vebjørn S. Førde, copyright: CC BY 4.0
+% Note: The author of this template is also the copyright holder.
+
+% Below is an explanation of the CC BY 4.0. Additional statements/ 
+% clarifications made by the author/copyright holder are marked with *.
+
+% YOU ARE FREE TO:
+% Share — copy and redistribute the material in any medium or format
+% Adapt — remix, transform, and build upon the material
+% for any purpose, even commercially.
+
+% UNDER THE FOLLOWING TERMS:
+% Attribution* — You must give appropriate credit, provide a link to the license,
+% and indicate if changes were made. You may do so in any reasonable manner, but 
+% not in any way that suggests the licensor endorses you or your use.
+
+% *Note: 
+% Attribution NOT NEEDED for: 
+%       - PDF distibution (like sharing your PDF document)
+%       - Use of (dummy)text and images provided in the template (obviously)
+%       - Distributing parts of the template, and not the template as a whole
+% I am not really concerned with being given credit. As long as you do not 
+% claim to have made the template yourself in distributing it further, I have
+% no complaints.
+
+% No additional restrictions — You may not apply legal terms or technological 
+% measures that legally restrict others from doing anything the license permits.
+
+% NOTICES:
+% No warranties are given.
+
+% Disclaimer* (added by copyright holder):
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+% IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+% FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+% AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+% LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+% SOFTWARE.
+
+% Read more about CC BY 4.0:
+% https://creativecommons.org/licenses/by/4.0/
